@@ -11,7 +11,32 @@ var options = {
 
 var httpServer = https.createServer(options, requestHandler);
 httpServer.listen(8000);
-console.log('Server listening on port 8000');
+
+
+var url = require('url');
+// httpServer.listen(8080);
+console.log('Server listening on port 8080');
+
+function requestHandler(req, res) {
+
+  var parsedUrl = url.parse(req.url);
+  console.log("The Request is: " + parsedUrl.pathname);
+
+  // Read in the file they requested
+  fs.readFile(__dirname + parsedUrl.pathname,
+    // Callback function, called when reading is complete
+    function(err, data) {
+      // if there is an error
+      if (err) {
+        res.writeHead(500);
+        return res.end('Error loading ' + parsedUrl.pathname);
+      }
+      // Otherwise, send the data, the contents of the file
+      res.writeHead(200);
+      res.end(data);
+    }
+  );
+}
 
 var io = require('socket.io').listen(httpServer);
 
@@ -20,8 +45,6 @@ var io = require('socket.io').listen(httpServer);
 io.sockets.on('connection',
   // We are given a websocket object in our function
   function(socket) {
-
-    numUsers++;
     console.log("We have a new client: " + socket.id);
     socket.on('coordinates', function(data) {
       io.sockets.emit('coordates', data);
@@ -39,7 +62,6 @@ io.sockets.on('connection',
     );
     socket.on('disconnect', function() {
       console.log("Client has disconnected");
-      numUsers--;
     });
 
   }
