@@ -1,0 +1,111 @@
+<!-- 
+iOS mobile enabled with fix from https://bugs.webkit.org/show_bug.cgi?id=176843#c11 for video-element:
+<video id="thevideo" height="480" width="720" playsinline controls="true" autoplay></video>
+... unfortunately iOS does not allow to hide the video frame, so this script does not work on mobile :(
+-->
+
+<html>
+  <head>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+
+    window.addEventListener('load', function() {
+      // The video element on the page to display the webcam
+      var video = document.getElementById('thevideo');
+
+      // Constraints - what do we want?
+      let constraints = { audio: false, video: true };
+
+      // Prompt the user for permission, get the stream
+      navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+      	/* Use the stream */
+
+      	// Attach to our video object
+      	video.srcObject = stream;
+
+      	// Wait for the stream to load enough to play
+      	video.onloadedmetadata = function(e) {
+      		video.play();
+		document.getElementById("thevideo").style.display = "none";
+	        draw();
+		document.getElementById("thecanvas").style.display = "none";
+		document.getElementById("theimage").style.display = "none";
+
+      	};
+      })
+      .catch(function(err) {
+      	/* Handle the error */
+      	alert(err);
+      });
+
+      // Canvas element on the page
+      var thecanvas = document.getElementById('thecanvas');
+      thecanvas.height="480";
+      thecanvas.width="720";
+      console.log(thecanvas);
+      var thecontext = thecanvas.getContext('2d');
+      console.log(thecontext);
+      console.log(video);
+      var draw = function() {
+      	// Draw the video onto the canvas
+      	thecontext.drawImage(video,0,0, video.width="480", video.height="720");
+	console.log("video size: %x% ", video.width, video.height)
+        var dataUrl = thecanvas.toDataURL();
+        socket.emit('dataurl',dataUrl);
+
+      	// Draw again in 3 seconds
+      	setTimeout(draw,3000);
+      };
+
+    });
+
+
+    var socket = io.connect();
+    socket.on('connect', function() {
+      console.log("Connected");
+    });
+
+    socket.on('dataurl', function(data) {
+      //create a test image to check socket connection (hidden by default, uncheck if needed)
+      //var theimage = document.getElementById('theimage');
+      //theimage.src = data.data;
+      //get Base64 image data and user id of it
+      document.getElementById('image_data').innerHTML = "In another reality I am half human, half machine."
+							+ "<br />" + "I can read Base64 and see you, "
+							 + "<span style=\"color:red\">" +  
+							data.id + "</span>" + "." + "<br /><br />" + 
+							"<span style=\"font-size:4\">" + data.data + "</span>";
+      //document.getElementById('user_id').innerHTML = data.id;
+});
+
+
+
+  </script>
+</head>
+<style>
+ @import url('https://fonts.googleapis.com/css?family=Cutive+Mono');
+ body {
+        font-family: 'Cutive Mono', monospace;
+	font-size:18;
+	text-align: center;
+    }
+h3 {
+	color: dark grey;
+}
+
+ p {	
+	color: black;
+	margin: auto;
+	max-width: 1080;
+	word-wrap: break-word;
+} 
+</style>
+<body>
+  <video id="thevideo" width="100" height="100" playsinline controls="true" autoplay></video>
+  <img id="theimage" height="480" width="720"/>
+  <p>
+    <span id="image_data"></span><br>      
+  </p>
+  <canvas id="thecanvas" style.display="none" width="1" height="1";></canvas>
+</body>
+</html>
