@@ -61,34 +61,35 @@ iOS mobile enabled with fix from https://bugs.webkit.org/show_bug.cgi?id=176843#
             console.log("Connected");
         });
 
-
-        //convert base64-data to binary
-        var BASE64_MARKER = ';base64,';
-        function binaryData(b64) {
-          var base64Index = b64.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
-          var base64 = b64.substring(base64Index);
-          var raw = window.atob(base64);
-          var rawLength = raw.length;
-          var array = new Uint8Array(new ArrayBuffer(rawLength));
-
-          for(i = 0; i < rawLength; i++) {
-            array[i] = raw.charCodeAt(i);
-          }
-          return array;
-        };
-        var binary_data = binaryData(data.data);
-        console.log(binary_data);
         // get base64-data, show it
         socket.on('dataurl', function(data) {
             //create a test image to check socket connection (hidden by default, uncheck if needed)
             //var theimage = document.getElementById('theimage');
             //theimage.src = data.data;
+
+            //convert base64-data to binary
+            var BASE64_MARKER = ';base64,';
+            function binaryData(b64) {
+              var base64Index = b64.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
+              var base64 = b64.substring(base64Index);
+              var raw = window.atob(base64);
+              var rawLength = raw.length;
+              var array = new Uint8Array(new ArrayBuffer(rawLength));
+
+              for(i = 0; i < rawLength; i++) {
+                array[i] = raw.charCodeAt(i);
+              }
+              return array;
+            };
+            var binary_data = binaryData(data.data);
+            //console.log(binary_data);
+
             //get Base64 image data and user id of it
             document.getElementById('image_data').innerHTML = "In another reality I am half human, half machine."
             					+ "<br />" + "I can read Base64 and see you, "
             					 + "<span style=\"color:red\">" +
             					data.id + "</span>" + "." + "<br /><br />" +
-            					"<span style=\"font-size:4\">" + data.data + "</span>";
+            					"<span style=\"font-size:4\">" + binary.data + "</span>";
         });
 
     </script>
