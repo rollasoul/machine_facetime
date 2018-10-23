@@ -9,115 +9,18 @@ https://gist.github.com/borismus/1032746
 <html>
   <head>
     <script src="/socket.io/socket.io.js"></script>
-    <script type="text/javascript">
-        window.addEventListener('load', function() {
-            // The video element on the page to display the webcam
-            var video = document.getElementById('thevideo');
-
-            // Constraints - what do we want?
-            let constraints = { audio: false, video: true };
-
-            // Prompt the user for permission, get the stream
-            navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
-                /* Use the stream */
-
-                // Attach to our video object
-                video.srcObject = stream;
-
-                // Wait for the stream to load enough to play
-                video.onloadedmetadata = function(e) {
-                	video.play();
-                    document.getElementById("thevideo").style.display = "none";
-                    draw();
-                    document.getElementById("thecanvas").style.display = "none";
-                    document.getElementById("theimage").style.display = "none";
-
-                };
-            })
-        .catch(function(err) {
-            /* Handle the error */
-            alert(err);
-            });
-
-          // Canvas element on the page
-          var thecanvas = document.getElementById('thecanvas');
-          thecanvas.height="480";
-          thecanvas.width="720";
-          console.log(thecanvas);
-          var thecontext = thecanvas.getContext('2d');
-          console.log(thecontext);
-          console.log(video);
-          var draw = function() {
-            // Draw the video onto the canvas
-            thecontext.drawImage(video,0,0, video.width="480", video.height="720");
-            console.log("video size: %x% ", video.width, video.height)
-            var dataUrl = thecanvas.toDataURL();
-            socket.emit('dataurl',dataUrl);
-            // Draw again in 3 seconds
-            setTimeout(draw,3000);
-            };
-        });
-
-        var socket = io.connect();
-
-        socket.on('connect', function() {
-            console.log("Connected");
-        });
-
-        // get base64-data, show it
-        socket.on('dataurl', function(data) {
-            //create a test image to check socket connection (hidden by default, uncheck if needed)
-            //var theimage = document.getElementById('theimage');
-            //theimage.src = data.data;
-
-            //convert base64-data to binary, tester ...
-            // var BASE64_MARKER = ';base64,';
-            // function binaryData(b64) {
-            //   var base64Index = b64.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
-            //   var base64 = b64.substring(base64Index);
-            //   var raw = window.atob(base64);
-            //   var rawLength = raw.length;
-            //   var array = new Uint8Array(new ArrayBuffer(rawLength));
-            //
-            //   for(i = 0; i < rawLength; i++) {
-            //     array[i] = raw.charCodeAt(i);
-            //   }
-            //   return array;
-            // };
-            // var binary_data = binaryData(data.data);
-            //console.log(binary_data);
-
-            //get Base64 image data and user id of it
-            document.getElementById('image_data').innerHTML = "In another reality I am half human, half machine."
-            					+ "<br />" + "I can read Base64 and see you, "
-            					 + "<span style=\"color:red\">" +
-            					data.id + "</span>" + "." + "<br /><br />" +
-            					"<span style=\"font-size:4\">" + data.data + "</span>";
-        });
-
-    </script>
+    <script src="face-api.min.js"></script>
+    <script src ="machine_script.js"></script>
 </head>
-<style>
-     @import url('https://fonts.googleapis.com/css?family=Cutive+Mono');
-     body {
-        font-family: 'Cutive Mono', monospace;
-        font-size:18;
-        text-align: center;
-        }
-    h3 {
-    	color: dark grey;
-        }
-
-     p {
-    	color: black;
-    	margin: auto;
-    	max-width: 1080;
-    	word-wrap: break-word;
-        }
-</style>
+<link rel="stylesheet" type="text/css" href="machine_style.css">
 <body>
-  <video id="thevideo" width="100" height="100" playsinline controls="true" autoplay></video>
+  <video id="thevideo" width="480" height="720" playsinline controls="true" autoplay></video>
   <img id="theimage" height="480" width="720"/>
+  <img id="theface" height="180" width="120"/>
+  <img id="theface2" height="180" width="120"/>
+  <p>
+    <span id="human_ident"></span><br>
+  </p>
   <p>
     <span id="image_data"></span><br>
   </p>

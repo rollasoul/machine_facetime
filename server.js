@@ -1,21 +1,21 @@
-//var http = require('http');
-var https = require('https');
+var http = require('http');
+//var https = require('https');
 
 var fs = require('fs'); // Using the filesystem module
 
 //edit and insert your https-certificate
-var options = {
-  key: fs.readFileSync('my-key.pem'),
-  cert: fs.readFileSync('my-cert.pem')
-};
+// var options = {
+// key: fs.readFileSync('my-key.pem'),
+// cert: fs.readFileSync('my-cert.pem')
+// };
 
-var httpServer = https.createServer(options, requestHandler);
-httpServer.listen(8000);
+var httpServer = http.createServer(requestHandler);
+httpServer.listen(3001);
 
 
 var url = require('url');
 // httpServer.listen(8080);
-console.log('Server listening on port 8080');
+console.log('Server listening on port 3001');
 
 function requestHandler(req, res) {
 
@@ -46,20 +46,21 @@ io.sockets.on('connection',
   // We are given a websocket object in our function
   function(socket) {
     console.log("We have a new client: " + socket.id);
-    socket.on('coordinates', function(data) {
-      io.sockets.emit('coordates', data);
-    });
+    // socket.on('coordinates', function(data) {
+    //   io.sockets.emit('coordates', data);
+    // });
     socket.on('dataurl', function(data) {
       io.sockets.emit('dataurl', {id: socket.id, data: data});
     });
 
-    socket.on('',
-      // Run this function when a message is sent
-      function(data) {
-        console.log(data);
-        io.sockets.emit('draw', { id: socket.id, data: data });
-      }
-    );
+    // socket.on('',
+    //   // Run this function when a message is sent
+    //   function(data) {
+    //     console.log(data);
+    //     //io.sockets.emit('draw');
+    //     io.sockets.emit('connectToChat', { id: socket.id, data: data });
+    //   }
+    // );
     socket.on('disconnect', function() {
       console.log("Client has disconnected");
     });
