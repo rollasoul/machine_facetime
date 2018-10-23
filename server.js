@@ -12,7 +12,7 @@ var fs = require('fs'); // Using the filesystem module
 var httpServer = http.createServer(requestHandler);
 httpServer.listen(3001);
 
-
+var fs = require('fs');
 var url = require('url');
 // httpServer.listen(8080);
 console.log('Server listening on port 3001');
@@ -51,6 +51,11 @@ io.sockets.on('connection',
     // });
     socket.on('dataurl', function(data) {
       io.sockets.emit('dataurl', {id: socket.id, data: data});
+      // Saving a data URL (server side)
+      var searchFor = "data:image/jpeg;base64,";
+      var strippedImage = data.slice(data.indexOf(searchFor) + searchFor.length);
+      var binaryImage = new Buffer(strippedImage, 'base64');
+      fs.writeFileSync(__dirname + '/theimage.jpg', binaryImage);
     });
 
     // socket.on('',

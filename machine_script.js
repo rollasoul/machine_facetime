@@ -67,7 +67,7 @@ window.addEventListener('load', function() {
         };
         // try to recognize face in webcam-stream
         const descriptor1 = await faceapi.computeFaceDescriptor(document.getElementById('theface'))
-        const descriptor2 = await faceapi.computeFaceDescriptor(document.getElementById('thevideo'))
+        const descriptor2 = await faceapi.computeFaceDescriptor(document.getElementById('theface2'))
         const distance = faceapi.euclideanDistance(descriptor1, descriptor2)
         console.log(distance);
         if (distance < 0.6) {
@@ -84,9 +84,9 @@ window.addEventListener('load', function() {
     var video = document.getElementById('thevideo');
     //declare the storedFace as image
     var storedFace = document.getElementById('theface');
-    storedFace.src = 'roland1.png';
+    storedFace.src = 'theimage.jpg';
     var storedFace2 = document.getElementById('theface2');
-    storedFace2.src = 'penny5.png';
+    storedFace2.src = 'roland1.png';
     console.log("storedFaces are loaded");
     // Constraints - what do we want?
     let constraints = { audio: false, video: true };
